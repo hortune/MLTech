@@ -15,3 +15,4 @@ svm-predict test_data model_3 output3
 echo "======= 3======"
 svm-predict test_data model_4 output4
 
+python3 count_w.py
