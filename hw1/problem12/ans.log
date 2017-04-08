@@ -1,0 +1,42 @@
+*
+optimization finished, #iter = 542
+nu = 0.148676
+obj = -0.010840, rho = 0.999761
+nSV = 1084, nBSV = 1084
+Total nSV = 1084
+*
+optimization finished, #iter = 562
+nu = 0.148676
+obj = -1.084000, rho = 0.999422
+nSV = 1089, nBSV = 1075
+Total nSV = 1089
+*
+optimization finished, #iter = 822
+nu = 0.148676
+obj = -108.400013, rho = 0.998992
+nSV = 1128, nBSV = 1028
+Total nSV = 1128
+WARNING: using -h 0 may be faster
+*
+optimization finished, #iter = 97380
+nu = 0.148676
+obj = -1084.120724, rho = 0.999335
+nSV = 1323, nBSV = 944
+Total nSV = 1323
+WARNING: using -h 0 may be faster
+*
+optimization finished, #iter = 10000000
+nu = 0.148676
+obj = -1232241.603288, rho = 0.827309
+nSV = 1109, nBSV = 1059
+Total nSV = 1109
+=======-5======
+Accuracy = 92.5662% (6749/7291) (classification)
+=======-3======
+Accuracy = 92.5662% (6749/7291) (classification)
+=======-1======
+Accuracy = 92.5662% (6749/7291) (classification)
+======= 1======
+Accuracy = 92.5662% (6749/7291) (classification)
+======= 3======
+Accuracy = 92.5662% (6749/7291) (classification)
