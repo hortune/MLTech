@@ -25,9 +25,9 @@ def get_result():
 result = get_result()
 print (result)
 fig = plt.figure()
-fig.suptitle("Ein in different C",fontsize=20)
+fig.suptitle("num of SV in different C",fontsize=20)
 plt.xlabel('C',fontsize = 18)
-plt.ylabel('Ein', fontsize = 16)
+plt.ylabel('num of SV', fontsize = 16)
 x = [-5,-3,-1,1,3]
 plt.plot([pow(10,i) for i in x],result,color='blue',lw=2)
 plt.xscale('log')
