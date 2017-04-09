@@ -1,6 +1,7 @@
 # coding: utf-8
 from random import shuffle
 from os import system
+import matplotlib.pyplot as plt
 data = open('train_data','r').read().split('\n')[:-1]
 cmd = (
         "svm-train -s 0 -t 2 -g 0.1 -c 0.1 train model_0",
@@ -43,4 +44,12 @@ for i in range(100):
         if val > max_val:
             max_val,index = val,ind
     ans[index] +=1
+fig = plt.figure()
+fig.suptitle("number in different gamma",fontsize=20)
+plt.xlabel('C',fontsize = 18)
+plt.ylabel('Ein', fontsize = 16)
+x = [-1,0,1,2,3]
+plt.plot([pow(10,i) for i in x],ans,color='blue',lw=2)
+plt.xscale('log')
+plt.show()
 print(ans)
