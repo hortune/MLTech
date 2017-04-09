@@ -17,22 +17,11 @@ valid = (
         "svm-predict train_data model_4 tmp > output4"
         )
 
-def gen_val():
-    shuffle(data)
-    with open('val','w') as fd:
-        for i in data[:1000]:
-            print(i, file=fd)
-    with open('train','w') as fd:
-        for  i in data[1000:]:
-            print(i,file=fd)
-
 def get_result():
-    result = [float(open('output'+str(i),'r').read().split(' ')[2][:-1]) for i in range(5)]
+    result = [float(open('model_'+str(i),'r').read().split('\n')[6].split(' ')[1]) for i in range(5)]
     return result
 
 
-for validation in valid:
-    system(validation)
 result = get_result()
 print (result)
 fig = plt.figure()
@@ -40,6 +29,6 @@ fig.suptitle("Ein in different C",fontsize=20)
 plt.xlabel('C',fontsize = 18)
 plt.ylabel('Ein', fontsize = 16)
 x = [-5,-3,-1,1,3]
-plt.plot([pow(10,i) for i in x],[100-i for i in result],color='blue',lw=2)
+plt.plot([pow(10,i) for i in x],result,color='blue',lw=2)
 plt.xscale('log')
 plt.show()
