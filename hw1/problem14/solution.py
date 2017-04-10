@@ -2,33 +2,28 @@
 from random import shuffle
 import matplotlib.pyplot as plt
 from os import system
-cmd = (
-        "svm-train -s 0 -t 2 -g 0.1 -c 0.1 train model_0",
-        "svm-train -s 0 -t 2 -g 1 -c 0.1 train model_1",
-        "svm-train -s 0 -t 2 -g 10 -c 0.1 train model_2",
-        "svm-train -s 0 -t 2 -g 100 -c 0.1 train model_3",
-        "svm-train -s 0 -t 2 -g 1000 -c 0.1 train model_4"
-        )
-valid = (
-        "svm-predict train_data model_0 tmp > output0",
-        "svm-predict train_data model_1 tmp > output1",
-        "svm-predict train_data model_2 tmp > output2",
-        "svm-predict train_data model_3 tmp > output3",
-        "svm-predict train_data model_4 tmp > output4"
-        )
+from math import exp,sqrt
+def kernel(x,y):
+    delta = (x[0]-y[0])**2+(x[1]-y[1])**2
+    return exp(-80*delta)
 
-def get_result():
-    result = [float(open('model_'+str(i),'r').read().split('\n')[6].split(' ')[1]) for i in range(5)]
-    return result
+def manipulate(i):
+    data = open('model_'+str(i),'r').read().split('\n')[9:-1]
+    data = [qaq.split(' ') for qaq in data]
+    data = [(float(num[0]),float(num[1].split(':')[1]),float(num[2].split(':')[1])) for num in data]
+    summan = 0
+    for i in range(len(data)):
+        for j in range(len(data)):
+            summan += data[i][0]*data[j][0]*kernel(data[i][1:],data[j][1:])
+    return 1/sqrt(summan)
 
+result = [manipulate(i) for i in range(5)]
 
-result = get_result()
-print (result)
 fig = plt.figure()
-fig.suptitle("Ein in different C",fontsize=20)
+fig.suptitle("Distance in different C",fontsize=20)
 plt.xlabel('C',fontsize = 18)
-plt.ylabel('Ein', fontsize = 16)
-x = [-5,-3,-1,1,3]
+plt.ylabel('Distance', fontsize = 16)
+x = [-3,-2,-1,0,1]
 plt.plot([pow(10,i) for i in x],result,color='blue',lw=2)
 plt.xscale('log')
 plt.show()
