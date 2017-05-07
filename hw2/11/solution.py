@@ -3,7 +3,7 @@ import numpy as np
 from numpy import genfromtxt
 from numpy.linalg import norm, inv
 def rbf(gamma, x1,x2):
-    return np.exp(-gamma*norm(x1-x2))
+    return np.exp(-gamma*((x1-x2).dot(x1-x2)))
 
 def Kernel(gamma,data):
     K = np.zeros(data.shape[0]**2).reshape(data.shape[0],data.shape[0])
@@ -15,24 +15,23 @@ def Kernel(gamma,data):
 def beta(lamb,gamma,data,y):
     return inv(lamb*np.identity(data.shape[0])+Kernel(gamma,data)).dot(y)
 
+
+def solve(gamma,b,data,x,y):
+    ans = 0
+    for test,y_ in zip(x,y):
+        summna = 0.
+        for bi,train in zip(b,data):
+            summna += bi*rbf(gamma,test,train)
+        predict = -1 if summna <0 else 1
+        ans += 1 if predict != y_ else 0
+    return ans
+
 def test(lamb,gamma,x,y,x_val,y_val):
     print "trying lambda",lamb,"gamma",gamma
     b = beta(lamb,gamma,x,y)
-    w = b.dot(x)
     
-    ans = [-1 if data<0 else 1 for data in x.dot(w)]
-    error = 0
-    for i,j in zip(ans,y):
-        if i != j:
-            error +=1
-    print "E_in",error/400.
-
-    ans = [-1 if data<0 else 1 for data in x_val.dot(w)]
-    error = 0
-    for i,j in zip(ans,y_val):
-        if i != j:
-            error +=1
-    print "E_out",error/100.
+    print "E_in",solve(gamma,b,x,x,y)/400.
+    print "E_out",solve(gamma,b,x,x_val,y)/100.
 
 data = genfromtxt('../data.dat',dtype=np.float32,delimiter=' ')
 x,y = data[:,:-1],data[:,-1]
