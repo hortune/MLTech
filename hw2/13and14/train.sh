@@ -29,3 +29,21 @@ svm-predict test_data model_7 output7
 echo "=======1000 0.125======"
 svm-predict test_data model_8 output8
 
+echo "=======0.001 32======"
+svm-predict train model_0 out0
+echo "=======0.001 2======"
+svm-predict train model_1 out1
+echo "=======0.001 0.125======"
+svm-predict train model_2 out2
+echo "=======1 32======"
+svm-predict train model_3 out3
+echo "=======1 2======"
+svm-predict train model_4 out4
+echo "=======1 0.125======"
+svm-predict train model_5 out5
+echo "=======1000 32======"
+svm-predict train model_6 out6
+echo "=======1000 2======"
+svm-predict train model_7 out7
+echo "=======1000 0.125======"
+svm-predict train model_8 out8
