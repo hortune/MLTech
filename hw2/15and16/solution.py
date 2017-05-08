@@ -2,7 +2,7 @@
 import numpy as np
 from numpy import genfromtxt
 from numpy.linalg import norm, inv
-
+import random
 class LSSVM:
     def __init__(self,data,y,lamb):
         self.data = data
@@ -41,15 +41,16 @@ train = data[:400]
 original_x = data[:400,:-1]
 original_y = data[:400,-1]
 x_val,y_val = data[400:,:-1],data[400:,-1]
-lambset = (0.01,0.1,1,10,100)
+#lambset = (0.01,0.1,1,10,100)
+lambset = (1e-5,1e-4,1e-3,0.01,0.1,1,10,100,1000,10000)
 
 for lamb in lambset:
     print "lambda",lamb
     ein_ans = np.zeros(400)
     eout_ans = np.zeros(100)
     for i in range(200):
-        np.random.shuffle(train)
-        x_train,y_train = train[:200,:-1],train[:200,-1]
+        locsample= np.array([train[random.randint(0,399)] for i in range(400)])
+        x_train,y_train = locsample[:400,:-1],locsample[:400,-1]
         model = LSSVM(x_train,y_train,lamb)
         ein_ans += model.activate(original_x)
         eout_ans += model.activate(x_val)
