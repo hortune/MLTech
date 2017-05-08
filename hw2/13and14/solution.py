@@ -17,7 +17,7 @@ parameters =((32,0.001),(2,0.001),(0.125,0.001),(32,1),(2,1),(0.125,1),(32,1000)
 
 
 for  index,par in zip(range(9),parameters):
-    print "gamma ",par[0],"C",par[1]
+    print "gamma",par[0],"C",par[1]
     ans = [1 if float(line)>0 else -1 for line in open('output'+str(index)).readlines()]
     error = 0
     for i in range(100):
