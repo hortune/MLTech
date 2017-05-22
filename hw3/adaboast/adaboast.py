@@ -21,8 +21,6 @@ def find_decision_stump(data,dim):
     min1, opt_cut1 = curr_pen_rp, -1
     min2, opt_cut2 = curr_pen_rn, -1
     
-    print("curr_pen_rp",curr_pen_rp)
-    print("curr_pen_rn",curr_pen_rn)
     for i in range(len(data)):
         curr_pen_rp += data[i][3] if data[i][2] > 0 else -data[i][3]
         
@@ -38,7 +36,6 @@ def find_decision_stump(data,dim):
         index = opt_cut1
         epsilon = min1/(total_neg + total_pos)
         threshold = (data[opt_cut1][dim]+data[opt_cut1+1][dim])/2 if opt_cut1 != (len(data)-1) else 99999999 
-        print ("epsilon", epsilon)
         
         change_var = sqrt((1-epsilon)/epsilon)
 
@@ -53,13 +50,11 @@ def find_decision_stump(data,dim):
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]/change_var))
             else:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]*change_var))
-        print("=================================")
-        return new_weighted_data, threshold, log(change_var), 1, min1/len(data) 
+        return new_weighted_data, threshold, log(change_var), 1, min1/len(data), epsilon
     
     else:
         index = opt_cut2
         epsilon = min2/(total_neg + total_pos)
-        print ("epsilon", epsilon)
         threshold = (data[opt_cut2][dim]+data[opt_cut2+1][dim])/2
         change_var = sqrt((1-epsilon)/epsilon)
 
@@ -74,18 +69,17 @@ def find_decision_stump(data,dim):
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]/change_var))
             else:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]*change_var))
-        print("=================================")
-        return new_weighted_data, threshold, log(change_var), -1, min2/len(data)
+        return new_weighted_data, threshold, log(change_var), -1, min2/len(data), epsilon
 
 def make_decision_stump(data):
     
-    nwd0, thres0, weight0, rp0, einu0 = find_decision_stump(data,0)
-    nwd1, thres1, weight1, rp1, einu1 = find_decision_stump(data,1)
+    nwd0, thres0, weight0, rp0, einu0, eps0 = find_decision_stump(data,0)
+    nwd1, thres1, weight1, rp1, einu1, eps1 = find_decision_stump(data,1)
    
     if einu0<einu1:
-        return nwd0, thres0, weight0, rp0, 0
+        return nwd0, thres0, weight0, rp0, 0, eps0
     else:
-        return nwd1, thres1, weight1, rp1, 1
+        return nwd1, thres1, weight1, rp1, 1, eps1
 
 def adaboast(x,y):
     hypothesis = []
@@ -93,8 +87,8 @@ def adaboast(x,y):
     data = [(nx[0],nx[1],ny,nu) for nx,ny,nu in zip(x,y,u)]
     
     for i in range(300):
-        data, thres, weight, rp, dim = make_decision_stump(data)
-        hypothesis.append((thres,weight,rp,dim))
+        data, thres, weight, rp, dim, eps = make_decision_stump(data)
+        hypothesis.append((thres,weight,rp,dim,eps))
     return hypothesis
 
 def activation(x,hypothesis):
@@ -111,10 +105,32 @@ def activation(x,hypothesis):
         else:
             y_pred.append(-1)
     return y_pred
-
-
+"""
+some mistake here and i don't know why
+def Ein(x,y,hypo):
+    ein = 0
+    for i,j in zip(x,y):
+        if i[hypo[3]] >= hypo[0] and j != hypo[2]:
+            ein += 1
+        else:
+            if j == hypo[2]:
+                ein += 1
+    return ein/len(x)
+"""
 x_train, y_train, x_test, y_test = load_data()
-x_fake = [(0,0),(1,0),(0,1),(-1,0),(0,-1)]
-y_fake = [1,-1,-1,-1,-1]
 hypothesis =  adaboast(x_train, y_train)
 y_pred = activation(x_test,hypothesis)
+
+def Ein_count(y_train,y_pred):
+    ein = 0
+    for i,j in zip(y_pred,y_train):
+        if i != j:
+            ein+=1
+    return ein/len(y_train)
+
+Ein_each = [Ein_count(activation(x_train,[hypo]),y_train) for hypo in hypothesis]
+print ("hypo1 alpha",hypothesis[0][1])
+print ("Ein of hypo1",Ein_each[0])
+print ("min(epsilon)",min([hypo[4] for hypo in hypothesis]))
+Ein_cum = [Ein_count(activation(x_train,hypothesis[:i+1]),y_train) for i in range(len(hypothesis))]
+print (Ein_cum)
