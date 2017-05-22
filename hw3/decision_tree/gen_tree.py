@@ -10,31 +10,34 @@ def load_data():
 
     return x_train, y_train, x_test, y_test
 
+
 def opt_gini(data,dim):
     data = sorted(data, key = lambda tup : tup[dim])
-    total_neg = sum([1 if dat[2]<0 else 0 for dat in data])
-    total_pos = sum([1 if dat[2]>0 else 0 for dat in data])
+    rf_neg, rf_pos = sum([1 if dat[2]<0 else 0 for dat in data]), sum([1 if dat[2]>0 else 0 for dat in data])
     
-    if total_neg == len(data):
+    if rf_neg == len(data):
         return -1, -2000, -1, 0
-    if total_pos == len(data):
+    if rf_pos == len(data):
         return -1, -2000, 1, 0
-    
-    min_gin_value_rp = total_neg +1 # the plus is for special effect
-    min_gin_value_rn = total_pos +1
-    gini_rp, optcut1 = total_neg, -1
-    gini_rn, optcut2 = total_pos, -1
+
+    min_gin_value = 1 
+    lf_neg,lf_pos = 0,0
+    optcut = -1
 
     for i in range(len(data)-1):
-        gini_rp += 1 if data[i][2] > 0 else -1
-        gini_rn += 1 if data[i][2] < 0 else -1
-        min_gin_value_rp, optcut1 = (gini_rp, i) if gini_rp <= min_gin_value_rp else (min_gin_value_rp, optcut1)
-        min_gin_value_rn, optcut2 = (gini_rn, i) if gini_rn <= min_gin_value_rn else (min_gin_value_rn, optcut2)
-    if min_gin_value_rp < min_gin_value_rn:
-        return optcut1, (data[optcut1][dim] + data[optcut1+1][dim])/2, 1, min_gin_value_rp
-    else:
-        return optcut2, (data[optcut2][dim] + data[optcut2+1][dim])/2, -1, min_gin_value_rn
+        lf_pos += 1 if data[i][2] > 0 else 0
+        lf_neg += 1 if data[i][2] < 0 else 0
 
+        rf_pos -= 1 if data[i][2] > 0 else 0
+        rf_neg -= 1 if data[i][2] < 0 else 0
+        
+        gin_left = 1 - (lf_pos/(lf_pos+lf_neg))**2 - (lf_pos/(lf_pos+lf_neg))**2
+        gin_right = 1 - (rf_pos/(rf_pos+rf_neg))**2 - (rf_pos/(rf_pos+rf_neg))**2
+        gini_impurity = (i+1)*gin_left/(len(data)) + (len(data)-i-1)*gin_right/len(data)
+
+        min_gin_value, optcut = (gini_impurity, i) if gini_impurity <= min_gin_value else (min_gin_value, optcut)
+    
+    return optcut, (data[optcut][dim] + data[optcut+1][dim])/2, 9487, min_gin_value
 def decision_tree(data,dt):
     lt,rt,dim = [],[], 0
     
