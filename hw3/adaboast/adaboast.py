@@ -18,11 +18,9 @@ def find_decision_stump(data,dim):
     curr_pen_rp, cut1 = total_neg, -1
     curr_pen_rn, cut2 = total_pos, -1
     
-    print ("total_neg",total_neg, "total_pos",total_pos,"dim",dim)
     min1, opt_cut1 = curr_pen_rp, -1
     min2, opt_cut2 = curr_pen_rn, -1
-    print("data")
-    print(data)
+    
     print("curr_pen_rp",curr_pen_rp)
     print("curr_pen_rn",curr_pen_rn)
     for i in range(len(data)):
@@ -35,23 +33,23 @@ def find_decision_stump(data,dim):
         
         if (i!= len(data) - 1 and data[i][dim] != data[i+1][dim]) or i == len(data):
             (min2,opt_cut2) = (curr_pen_rn,i) if curr_pen_rn < min2 else (min2,opt_cut2)
-    print("opt_cut1",opt_cut1,"opt_cut2",opt_cut2)
-    print ("min1",min1,"min2",min2)
+    
     if min1 <= min2:
         index = opt_cut1
         epsilon = min1/(total_neg + total_pos)
         threshold = (data[opt_cut1][dim]+data[opt_cut1+1][dim])/2 if opt_cut1 != (len(data)-1) else 99999999 
         print ("epsilon", epsilon)
+        
         change_var = sqrt((1-epsilon)/epsilon)
 
         new_weighted_data = []
         for subdata in data[:index+1]:
-            if subdata[2] == 1:
+            if subdata[2] == -1:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]/change_var))
             else:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]*change_var))
         for subdata in data[index+1:]:
-            if subdata[2] == -1:
+            if subdata[2] == 1:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]/change_var))
             else:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]*change_var))
@@ -67,12 +65,12 @@ def find_decision_stump(data,dim):
 
         new_weighted_data = []
         for subdata in data[:index+1]:
-            if subdata[2] == -1:
+            if subdata[2] == 1:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]/change_var))
             else:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]*change_var))
         for subdata in data[index+1:]:
-            if subdata[2] == 1:
+            if subdata[2] == -1:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]/change_var))
             else:
                 new_weighted_data.append((subdata[0],subdata[1],subdata[2],subdata[3]*change_var))
@@ -104,7 +102,7 @@ def activation(x,hypothesis):
     for i in range(len(x)):
         ans = 0
         for hyp in hypothesis:
-            if i[hyp[3]] >= hyp[0]:
+            if x[i][hyp[3]] >= hyp[0]:
                 ans += hyp[1]*hyp[2]
             else:
                 ans -= hyp[1]*hyp[2] 
@@ -116,8 +114,7 @@ def activation(x,hypothesis):
 
 
 x_train, y_train, x_test, y_test = load_data()
-
-x_fake= [(1,1),(0,1),(1,0),(0,0)]
-y_fake= [1,-1,-1,1]
+x_fake = [(0,0),(1,0),(0,1),(-1,0),(0,-1)]
+y_fake = [1,-1,-1,-1,-1]
 hypothesis =  adaboast(x_train, y_train)
-#y_pred = actvation(x_test)
+y_pred = activation(x_test,hypothesis)
