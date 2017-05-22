@@ -48,12 +48,12 @@ def decision_tree(data,dt):
     data = sorted(data, key = lambda tup : tup[dim])
     
     if split_index in (-1, len(data)-1):
-        dt.append((0,0,0,-1,rp))
+        dt.append([0,0,0,-1,rp])
         return
     decision_tree(data[:split_index+1],lt)
     decision_tree(data[split_index+1:],rt)
     
-    dt.append((lt,rt,threshold,dim,rp))
+    dt.append([lt,rt,threshold,dim,rp])
 
 def predict(x,model):
     if model[0][3] == -1:
@@ -73,5 +73,27 @@ Eout = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_test, y_test_pred)])
 Ein = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_train, y_pred)])
 print ("Eout",Eout)
 print ("Ein",Ein)
+def batch_prediction(x_train,y_train,x_test,y_test,model):
+    y_pred = [predict(x,model) for x in x_train]
+    y_test_pred = [predict(x,model) for x in x_test]
+  
+    Eout = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_test, y_test_pred)])
+    Ein = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_train, y_pred)])
+    print ("Eout",Eout,"Ein",Ein)
 
-
+def pull_and_travers(x_train,y_train,x_test,y_test,model,my_dt):
+    if model[0][3] == -1:
+        return
+    if model[0][0][0][3] == -1:
+        tmp = model[0][0]
+        model[0][0] = model[0][1]
+        batch_prediction(x_train,y_train,x_test,y_test,my_dt)
+        model[0][0] = tmp
+    if model[0][1][0][3] == -1:
+        tmp = model[0][1]
+        model[0][1] = model[0][0]
+        batch_prediction(x_train,y_train,x_test,y_test,my_dt)
+        model[0][1] = tmp
+    pull_and_travers(x_train,y_train,x_test,y_test,model[0][0],my_dt) 
+    pull_and_travers(x_train,y_train,x_test,y_test,model[0][1],my_dt)
+pull_and_travers(x_train,y_train,x_test,y_test,my_dt,my_dt)
