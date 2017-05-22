@@ -20,27 +20,27 @@ def opt_gini(data,dim):
     if total_pos == len(data):
         return -1, -2000, 1, 0
     
-    min_gin_value_rp = total_neg +1 # the plus is for special effect
-    min_gin_value_rn = total_pos +1
+    min_gin_value_rp = total_neg
+    min_gin_value_rn = total_pos
     gini_rp, optcut1 = total_neg, -1
     gini_rn, optcut2 = total_pos, -1
 
-    for i in range(len(data)-1):
+    for i in range(len(data)):
         gini_rp += 1 if data[i][2] > 0 else -1
         gini_rn += 1 if data[i][2] < 0 else -1
         min_gin_value_rp, optcut1 = (gini_rp, i) if gini_rp <= min_gin_value_rp else (min_gin_value_rp, optcut1)
         min_gin_value_rn, optcut2 = (gini_rn, i) if gini_rn <= min_gin_value_rn else (min_gin_value_rn, optcut2)
     if min_gin_value_rp < min_gin_value_rn:
-        #if optcut1 == -1:
-        #    return -1, -2000, 1, min_gin_value_rp
-        #if optcut1 == len(data)-1:
-        #    return -1, -2000, -1, min_gin_value_rp
+        if optcut1 == -1:
+            return -1, -2000, 1, min_gin_value_rp
+        if optcut1 == len(data)-1:
+            return -1, -2000, -1, min_gin_value_rp
         return optcut1, (data[optcut1][dim] + data[optcut1+1][dim])/2, 1, min_gin_value_rp
     else:
-        #if optcut2 == -1:
-        #    return -1, -2000, -1, min_gin_value_rn
-        #if optcut2 == len(data)-1:
-        #    return -1, -2000, 1, min_gin_value_rn
+        if optcut2 == -1:
+            return -1, -2000, -1, min_gin_value_rn
+        if optcut2 == len(data)-1:
+            return -1, -2000, 1, min_gin_value_rn
         return optcut2, (data[optcut2][dim] + data[optcut2+1][dim])/2, -1, min_gin_value_rn
 
 
