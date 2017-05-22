@@ -87,8 +87,9 @@ def adaboast(x,y):
     data = [(nx[0],nx[1],ny,nu) for nx,ny,nu in zip(x,y,u)]
     
     for i in range(300):
+        usum = sum([dat[3] for dat in data])
         data, thres, weight, rp, dim, eps = make_decision_stump(data)
-        hypothesis.append((thres,weight,rp,dim,eps))
+        hypothesis.append((thres,weight,rp,dim,eps,usum))
     return hypothesis
 
 def activation(x,hypothesis):
@@ -128,9 +129,12 @@ def Ein_count(y_train,y_pred):
             ein+=1
     return ein/len(y_train)
 
-Ein_each = [Ein_count(activation(x_train,[hypo]),y_train) for hypo in hypothesis]
 print ("hypo1 alpha",hypothesis[0][1])
-print ("Ein of hypo1",Ein_each[0])
+print ("Ein of hypo1", [Ein_count(activation(x_train,[hypo]),y_train) for hypo in hypothesis])
 print ("min(epsilon)",min([hypo[4] for hypo in hypothesis]))
 Ein_cum = [Ein_count(activation(x_train,hypothesis[:i+1]),y_train) for i in range(len(hypothesis))]
-print (Ein_cum)
+print ("Ein_cum",Ein_cum)
+
+print ("U_t",[hypo[5] for hypo in hypothesis])
+print ("Eout_cum",[Ein_count(activation(x_test,hypothesis[:i+1]),y_test) for i in range(len(hypothesis))])
+print ("Eout_per", [Ein_count(activation(x_test,[hypo]),y_test) for hypo in hypothesis])
