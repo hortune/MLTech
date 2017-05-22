@@ -68,7 +68,16 @@ y_pred = [predict(x,my_dt) for x in x_train]
 y_test_pred = [predict(x,my_dt) for x in x_test]
 Eout = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_test, y_test_pred)])
 Ein = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_train, y_pred)])
-print ("Eout",Eout)
-print ("Ein",Ein)
 
-
+def plot(my_dt,my_id):
+    if my_dt[0][3] == -1:
+        print ("{} [label=\"value = {}\" ] ;".format(my_id,my_dt[0][4]),sep='')
+        print ("{} -> {} ;".format(my_id//2,my_id))
+        return 
+    print ("{0} [label=\"X[{1}] <= {2}\" ] ;".format(my_id,my_dt[0][3],my_dt[0][2]),sep='')
+    print ("{} -> {} ;".format(my_id//2,my_id))
+    plot(my_dt[0][0],my_id*2)
+    plot(my_dt[0][1],my_id*2+1)
+print("digraph Tree{\nnode [shape=box] ;")
+plot(my_dt,1)
+print("}")
