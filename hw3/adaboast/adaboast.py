@@ -129,12 +129,52 @@ def Ein_count(y_train,y_pred):
             ein+=1
     return ein/len(y_train)
 
-print ("hypo1 alpha",hypothesis[0][1])
-print ("Ein of hypo1", [Ein_count(activation(x_train,[hypo]),y_train) for hypo in hypothesis])
-print ("min(epsilon)",min([hypo[4] for hypo in hypothesis]))
-Ein_cum = [Ein_count(activation(x_train,hypothesis[:i+1]),y_train) for i in range(len(hypothesis))]
-print ("Ein_cum",Ein_cum)
+import matplotlib.pyplot as plt
+import numpy as np
 
-print ("U_t",[hypo[5] for hypo in hypothesis])
-print ("Eout_cum",[Ein_count(activation(x_test,hypothesis[:i+1]),y_test) for i in range(len(hypothesis))])
-print ("Eout_per", [Ein_count(activation(x_test,[hypo]),y_test) for hypo in hypothesis])
+#Problem 7 & 8
+fig = plt.figure()
+print ("hypo1 alpha",hypothesis[0][1])
+Ein_per = [Ein_count(activation(x_train,[hypo]),y_train) for hypo in hypothesis]
+print ("Ein_per hypo[0]", Ein_per[0])
+plt.plot(np.arange(300),Ein_per)
+fig.savefig('Ein_per')
+fig.clf()
+
+# Problem 9
+Ein_cum = [Ein_count(activation(x_train,hypothesis[:i+1]),y_train) for i in range(len(hypothesis))]
+print ("Ein_cum[G]",Ein_cum[-1])
+
+plt.plot(np.arange(300),Ein_cum)
+fig.savefig('Ein_cum')
+fig.clf()
+
+# Problem 10
+ut= [hypo[5] for hypo in hypothesis]
+#print ("U_t", ut)
+print('ut[1]',ut[1],'ut[-1]',ut[-1])
+plt.plot(np.arange(300),ut)
+fig.savefig('U_t')
+fig.clf()
+
+# Problem 11
+epsion_set = [hypo[4] for hypo in hypothesis]
+print ("min(epsilon)",min(epsion_set))
+plt.plot(np.arange(300),epsion_set)
+fig.savefig('Epsilon')
+fig.clf()
+
+# Problem 12
+Eout_per = [Ein_count(activation(x_test,[hypo]),y_test) for hypo in hypothesis]
+print ("Eout_per g1", Eout_per[0])
+plt.plot(np.arange(300),Eout_per)
+fig.savefig('Eout_per')
+fig.clf()
+
+
+# Problem 13
+Eout_cum = [Ein_count(activation(x_test,hypothesis[:i+1]),y_test) for i in range(len(hypothesis))]
+print ("Eout_cum G", Eout_cum[-1])
+plt.plot(np.arange(300),Eout_cum)
+fig.savefig('Eout_cum')
+fig.clf()
