@@ -31,25 +31,15 @@ def opt_gini(data,dim):
         min_gin_value_rp, optcut1 = (gini_rp, i) if gini_rp <= min_gin_value_rp else (min_gin_value_rp, optcut1)
         min_gin_value_rn, optcut2 = (gini_rn, i) if gini_rn <= min_gin_value_rn else (min_gin_value_rn, optcut2)
     if min_gin_value_rp < min_gin_value_rn:
-        #if optcut1 == -1:
-        #    return -1, -2000, 1, min_gin_value_rp
-        #if optcut1 == len(data)-1:
-        #    return -1, -2000, -1, min_gin_value_rp
         return optcut1, (data[optcut1][dim] + data[optcut1+1][dim])/2, 1, min_gin_value_rp
     else:
-        #if optcut2 == -1:
-        #    return -1, -2000, -1, min_gin_value_rn
-        #if optcut2 == len(data)-1:
-        #    return -1, -2000, 1, min_gin_value_rn
         return optcut2, (data[optcut2][dim] + data[optcut2+1][dim])/2, -1, min_gin_value_rn
-
 
 def decision_tree(data,dt):
     lt,rt,dim = [],[], 0
     
     split_index,threshold,rp,mg = opt_gini(data,0)
     split_index1,threshold1,rp1,mg1 = opt_gini(data,1) 
-    
     if mg > mg1:
         split_index, threshold, rp, dim = split_index1, threshold1, rp1, 1
     data = sorted(data, key = lambda tup : tup[dim])
@@ -78,5 +68,20 @@ y_pred = [predict(x,my_dt) for x in x_train]
 y_test_pred = [predict(x,my_dt) for x in x_test]
 Eout = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_test, y_test_pred)])
 Ein = sum([0 if i==j else 1/len(y_test) for i,j in zip(y_train, y_pred)])
-print (Eout)
-print (Ein)
+print ("Eout",Eout)
+print ("Ein",Ein)
+
+
+def plot(my_dt,my_id):
+    if my_dt[0][3] == -1:
+        print ("{} [label=\"value = {}\" ] ;".format(my_id,my_dt[0][4]),sep='')
+        print ("{} -> {} ;".format(my_id//2,my_id))
+        return 
+    print ("{0} [label=\"X[{1}] <= {2}\" ] ;".format(my_id,my_dt[0][3],my_dt[0][2]),sep='')
+    print ("{} -> {} ;".format(my_id//2,my_id))
+    plot(my_dt[0][0],my_id*2)
+    plot(my_dt[0][1],my_id*2+1)
+print("=========================")
+print("digraph Tree{\nnode [shape=box] ;")
+plot(my_dt,1)
+print("}")
