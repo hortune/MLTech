@@ -1,0 +1,2 @@
+python3 candrt.py > 16_result.txt
+python3 plot.py
